@@ -1,0 +1,885 @@
+1.pygame.init()
+Purpose: Starts up all Pygame modules
+What it does: Initializes graphics, sound, input, and other systems
+Why we use it: Must be called before any other Pygame functions
+
+2->pygame.quit()
+Purpose: Shuts down all Pygame modules
+What it does: Closes everything properly and frees memory
+Why we use it: Clean exit when game ends
+
+3.->pygame.display.set_mode()
+self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))        
+Purpose: Creates the game window
+Parameters: (width, height) - window size in pixels
+Returns: A Surface object representing the screen
+Why we use it: Creates the main game window where everything is drawn
+
+4->pygame.display.set_caption()
+pygame.display.set_caption("Subway Runner - Hand Control")
+Purpose: Sets the window title
+Parameters: String for the window title
+Why we use it: Shows game name in the title bar
+
+5->pygame.display.flip()
+Purpose: Updates the entire display
+What it does: Makes everything drawn visible on screen
+Why we use it: Must be called after drawing to show changes
+
+6->pygame.time.Clock()
+Purpose: Creates a clock object to control frame rate
+Why we use it: Helps maintain consistent game speed
+
+7->clock.tick(fps)
+Purpose: Controls game speed
+Parameters: Frames per second (FPS)
+What it does: Pauses the game to maintain specified FPS
+
+8->pygame.Surface() ->A Pygame Surface is a fundamental concept in Pygame, representing a rectangular area where images, shapes, and other visual elements can be drawn. It acts as a canvas for rendering graphics in a game.
+
+>>overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+Purpose: Creates a new drawing surface
+Parameters: (width, height), optional flags like pygame.SRCALPHA for transparency
+Why we use it: For creating overlays, images, or temporary drawing surfaces
+
+9->surface.fill()
+python>>
+self.screen.fill(GRAY)
+overlay.fill((0, 0, 0, 200))
+Purpose: Fills a surface with color
+Parameters: Color tuple (R, G, B) or (R, G, B, A) for transparency
+Why we use it: Clear screen or fill surfaces with solid colors
+
+10->pygame.draw.rect()
+python
+pygame.draw.rect(screen, color, rect)
+pygame.draw.rect(screen, WHITE, rect, 2)
+Purpose: Draws a rectangle
+Parameters:
+screen - where to draw
+color - fill color
+rect - rectangle object or (x, y, width, height)
+width - optional border thickness (0 = filled, >0 = outline)
+Why we use it: Drawing player, obstacles, and UI elements
+
+11->pygame.font.SysFont()
+python
+self.font = pygame.font.SysFont("Arial", 28)
+self.big_font = pygame.font.SysFont("Arial", 48)
+Purpose: Creates a font object for text rendering
+Parameters: Font name, size
+Why we use it: For displaying score, instructions, and menus
+
+12->font.render()
+python
+score_text = self.font.render(f"Score: {self.score}", True, WHITE)
+Purpose: Creates an image of text
+Parameters:
+Text string
+True/False for anti-aliasing (smooth edges)
+Text color
+Returns: A Surface with the rendered text
+Why we use it: Convert text into drawable images
+
+13->surface.blit()
+python>>
+self.screen.blit(image, rect)
+self.screen.blit(score_text, (20, 20))
+Purpose: Draws one surface onto another
+Parameters:
+source - surface to draw (image or text)
+dest - position (x, y) or rectangle
+Why we use it: Drawing images, text, and other surfaces onto the screen
+Image Loading and Manipulation
+
+14->pygame.image.load()
+python>>
+self.image_normal = pygame.image.load(os.path.join(assets_path, f'player_normal{ext}'))
+Purpose: Loads an image from file
+Parameters: File path string
+Returns: Surface containing the image
+Why we use it: Load player, obstacle, and track images
+
+15->image.convert_alpha()
+python
+.convert_alpha()
+Purpose: Optimizes image for transparency and performance
+What it does: Converts image to same format as screen for faster drawing
+Why we use it: Makes transparent images (PNG) draw faster
+
+16->pygame.transform.scale()
+python
+self.image_normal = pygame.transform.scale(self.image_normal, (RUNNER_WIDTH, RUNNER_HEIGHT))
+Purpose: Resizes an image
+Parameters: Source surface, new (width, height)
+Returns: New scaled surface
+Why we use it: Make images fit game dimensions
+
+17->Rectangle Functions
+pygame.Rect()
+python
+rect = pygame.Rect(self.x - RUNNER_WIDTH // 2, self.y, RUNNER_WIDTH, RUNNER_HEIGHT)
+Purpose: Creates a rectangle object
+Parameters: (x, y, width, height)
+Why we use it: For collision detection and positioning
+
+18->image.get_rect()
+python
+rect = image.get_rect(topleft=(self.x - RUNNER_WIDTH // 2, self.y))
+Purpose: Gets rectangle from an image
+Parameters: Optional positioning like topleft=, center=, etc.
+Why we use it: Position images accurately
+
+19->rect.colliderect()
+python
+if player_rect.colliderect(obstacle_rect):
+Purpose: Checks if two rectangles overlap
+Parameters: Another rectangle
+Returns: True if colliding, False otherwise
+Why we use it: Detect collisions between player and obstacles
+
+20->Event Handling Functions
+pygame.event.get()
+python
+for event in pygame.event.get():
+Purpose: Gets all pending events
+Returns: List of events (key presses, mouse moves, etc.)
+Why we use it: Handle user input like keyboard and window closing
+
+Event Types and Attributes
+python
+if event.type == pygame.QUIT:
+if event.type == pygame.KEYDOWN:
+if event.key == pygame.K_SPACE:
+Common Event Types:
+
+21->pygame.QUIT - window close button clicked
+
+22->pygame.KEYDOWN - key pressed
+
+23->pygame.KEYUP - key released
+
+Common Key Constants:
+
+24->pygame.K_SPACE - space bar
+
+25->pygame.K_r - R key
+
+26->pygame.K_q - Q key
+
+How They Work Together in the Game Loop
+Here's the typical game flow using these functions:
+
+27->python
+# 1. INITIALIZATION
+pygame.init()
+screen = pygame.display.set_mode((800, 600))
+clock = pygame.time.Clock()
+
+example
+
+# 2. MAIN GAME LOOP
+running = True
+while running:
+    # 3. EVENT HANDLING
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    # 4. GAME LOGIC
+    # Update player, obstacles, scores, etc.
+    
+    # 5. DRAWING
+    screen.fill(BLACK)  # Clear screen
+    
+    # Draw everything
+    screen.blit(player_image, player_rect)
+    screen.blit(score_text, (10, 10))
+    
+    # 6. UPDATE DISPLAY
+    pygame.display.flip()
+    
+    # 7. CONTROL SPEED
+    clock.tick(60)
+
+# 8. CLEANUP
+pygame.quit()
+Special Pygame Constants Used
+pygame.SRCALPHA
+python
+pygame.Surface((width, height), pygame.SRCALPHA)
+Purpose: Creates surface with alpha (transparency) channel
+Why we use it: For semi-transparent overlays in menus
+
+
+
+
+
+# =============================================
+# IMPORT SECTION - LIBRARIES WE NEED
+# =============================================
+import pygame       # Main game library for graphics, sound, input
+import random       # To generate random obstacles in random lanes
+import os           # To handle file paths for loading images
+from hand_controller import HandController  # Your hand gesture detection class
+
+# =============================================
+# PYGAME INITIALIZATION - START THE ENGINE
+# =============================================
+pygame.init()  # MUST be called first - starts all Pygame modules
+
+# =============================================
+# SCREEN SETUP - CREATING THE GAME WINDOW
+# =============================================
+# Constants for window size
+SCREEN_WIDTH = 800   # Width of game window in pixels
+SCREEN_HEIGHT = 600  # Height of game window in pixels
+
+# Create the main game window
+# pygame.display.set_mode((width, height)) returns: Surface object
+# Arguments: (width, height) - size of window in pixels
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+# Set the window title bar text
+# pygame.display.set_caption(title) returns: None
+# Arguments: title (string) - text to show in title bar
+pygame.display.set_caption("Subway Runner - Hand Control")
+
+# =============================================
+# COLOR DEFINITIONS - RGB VALUES
+# =============================================
+# Colors are stored as (Red, Green, Blue) tuples
+# Each value ranges from 0-255
+WHITE = (255, 255, 255)    # Pure white
+BLACK = (0, 0, 0)          # Pure black  
+RED = (255, 0, 0)          # Pure red
+GREEN = (0, 255, 0)        # Pure green
+BLUE = (0, 120, 255)       # Light blue for player
+GRAY = (100, 100, 100)     # Gray for background
+YELLOW = (255, 255, 0)     # Yellow for track lines
+TRACK_COLOR = (60, 60, 60) # Dark gray for tracks
+
+# =============================================
+# GAME SETTINGS - CONTROLLING GAME SPEED
+# =============================================
+FPS = 60  # Frames Per Second - controls how fast game updates
+# pygame.time.Clock() returns: Clock object
+# Used to control frame rate and game timing
+clock = pygame.time.Clock()
+
+# =============================================
+# PLAYER PHYSICS SETTINGS
+# =============================================
+RUNNER_WIDTH = 60    # Player width in pixels
+RUNNER_HEIGHT = 100  # Player height in pixels  
+GRAVITY = 1.0        # How fast player falls down (acceleration)
+JUMP_STRENGTH = -18  # Initial upward velocity when jumping (negative because Y increases downward)
+
+# =============================================
+# LANE SYSTEM - WHERE PLAYER CAN MOVE
+# =============================================
+# X-coordinates for left, center, and right lanes
+LANES = [200, 400, 600]  # These are the center X positions of each lane
+
+# =============================================
+# OBSTACLE SYSTEM VARIABLES
+# =============================================
+obstacles = []              # List to store all active obstacles
+BASE_OBSTACLE_SPEED = 8     # Starting speed of obstacles
+obstacle_speed = BASE_OBSTACLE_SPEED  # Current obstacle speed
+obstacle_timer = 0          # Counter to control when to spawn new obstacles
+OBSTACLE_SPAWN_INTERVAL = 50 # How many frames between obstacle spawns
+
+# =============================================
+# TRACK SCROLLING SYSTEM - CREATES MOVEMENT ILLUSION
+# =============================================
+track_offset = 0        # Current scroll position for track animation
+BASE_TRACK_SPEED = 8    # Base speed for track scrolling
+track_speed = BASE_TRACK_SPEED  # Current track scroll speed
+
+# =============================================
+# GAME STATE VARIABLES - TRACKING GAME PROGRESS
+# =============================================
+score = 0                       # Player's current score
+game_state = "menu"             # Current game state: "menu", "playing", "game_over"
+current_gesture = "none"        # Latest hand gesture detected
+last_speed_increase_score = 0   # Prevents repeated speed increases at same score
+elapsed_time = 0                # Timer for continuous scoring system
+
+# =============================================
+# FONT SYSTEM - FOR DISPLAYING TEXT
+# =============================================
+# pygame.font.SysFont(name, size) returns: Font object
+# Arguments: name (string) - font name, size (int) - font size in pixels
+font = pygame.font.SysFont("Arial", 28)      # Regular text font
+big_font = pygame.font.SysFont("Arial", 48)  # Large text for titles
+
+# =============================================
+# PLAYER VARIABLES - TRACKING PLAYER STATE
+# =============================================
+player_x = LANES[1]                         # Starting X position (center lane)
+player_y = SCREEN_HEIGHT - RUNNER_HEIGHT - 20  # Starting Y position (bottom with margin)
+player_vel_y = 0        # Vertical velocity for jumping physics
+player_jumping = False  # Is player currently jumping?
+player_crouching = False # Is player currently crouching?
+player_lane = 1         # Current lane: 0=left, 1=center, 2=right
+
+# =============================================
+# IMAGE LOADING FUNCTION
+# =============================================
+def load_image(filename, width, height):
+    """
+    Loads and scales an image from assets folder
+    Arguments: 
+      filename (string) - name of image file
+      width (int) - desired width in pixels
+      height (int) - desired height in pixels
+    Returns: Pygame Surface object with scaled image, or None if loading fails
+    """
+    try:
+        # pygame.image.load(path) returns: Surface object with loaded image
+        image = pygame.image.load(f"assets/{filename}")
+        # pygame.transform.scale(surface, (width, height)) returns: New scaled Surface
+        image = pygame.transform.scale(image, (width, height))
+        return image
+    except:
+        # Error handling if image file not found
+        print(f"Could not load image: {filename}")
+        return None
+
+# =============================================
+# LOAD ALL GAME IMAGES
+# =============================================
+# Player state images
+player_normal_img = load_image("player_normal.png", RUNNER_WIDTH, RUNNER_HEIGHT)
+player_jump_img = load_image("player_jumping.png", RUNNER_WIDTH, RUNNER_HEIGHT)
+player_crouch_img = load_image("player_crouching.png", RUNNER_WIDTH, RUNNER_HEIGHT//2)
+
+# Obstacle images
+box_img = load_image("box.png", 60, 60)
+barrier_img = load_image("barrier.png", 80, 80)
+hole_img = load_image("hole.png", 100, 40)
+train_img = load_image("train.png", 140, 120)
+low_barrier_img = load_image("low_barrier.png", 70, 35)
+
+# Track background image
+track_img = load_image("track.png", 160, 40)  # Lane width=160, segment height=40
+use_track_image = track_img is not None  # Flag to check if track image loaded successfully
+
+# =============================================
+# HAND CONTROLLER SETUP
+# =============================================
+try:
+    # Create hand controller object for gesture recognition
+    hand_controller = HandController()
+    print("Hand controller started successfully!")
+except Exception as e:
+    # Error handling if camera not available
+    print(f"Error starting hand controller: {e}")
+    hand_controller = None
+
+# =============================================
+# PLAYER UPDATE FUNCTION - MOVEMENT AND PHYSICS
+# =============================================
+def update_player():
+    """
+    Updates player position and physics every frame
+    Handles jumping gravity and lane movement
+    """
+    # Declare global variables we want to modify
+    global player_y, player_vel_y, player_jumping, player_x
+    
+    # JUMPING PHYSICS - only apply when player is jumping
+    if player_jumping:
+        # Add gravity to vertical velocity (makes player fall faster)
+        player_vel_y += GRAVITY
+        # Update Y position based on velocity
+        player_y += player_vel_y
+    
+    # GROUND COLLISION DETECTION - stop falling when hit ground
+    if player_jumping and player_y >= SCREEN_HEIGHT - RUNNER_HEIGHT - 20:
+        player_y = SCREEN_HEIGHT - RUNNER_HEIGHT - 20  # Snap to ground position
+        player_vel_y = 0      # Reset velocity
+        player_jumping = False  # No longer jumping
+    
+    # SMOOTH LANE MOVEMENT - move gradually toward target lane
+    target_x = LANES[player_lane]  # Get target X position for current lane
+    # Move 20% of remaining distance each frame for smooth animation
+    player_x += (target_x - player_x) * 0.2
+
+# =============================================
+# PLAYER DRAWING FUNCTION - VISUAL REPRESENTATION
+# =============================================
+def draw_player():
+    """
+    Draws the player character in correct state and position
+    Uses images if available, otherwise draws colored rectangles
+    """
+    if player_crouching and player_crouch_img:
+        # Draw crouching player - positioned lower because height is halved
+        # screen.blit(source, dest) returns: None
+        # Arguments: source (Surface) - image to draw, dest (x,y) - position to draw at
+        screen.blit(player_crouch_img, (player_x - RUNNER_WIDTH//2, player_y + RUNNER_HEIGHT//2))
+    elif player_jumping and player_jump_img:
+        # Draw jumping player - normal position but jump pose
+        screen.blit(player_jump_img, (player_x - RUNNER_WIDTH//2, player_y))
+    elif player_normal_img:
+        # Draw normal running player
+        screen.blit(player_normal_img, (player_x - RUNNER_WIDTH//2, player_y))
+    else:
+        # FALLBACK: Draw colored rectangle if images not available
+        color = BLUE if not player_jumping else (100, 200, 255)  # Light blue when jumping
+        height = RUNNER_HEIGHT if not player_crouching else RUNNER_HEIGHT//2
+        y_pos = player_y if not player_crouching else player_y + RUNNER_HEIGHT//2
+        
+        # pygame.draw.rect(surface, color, rect) returns: None  
+        # Arguments: surface - where to draw, color - fill color, rect - (x,y,width,height)
+        pygame.draw.rect(screen, color, (player_x - RUNNER_WIDTH//2, y_pos, RUNNER_WIDTH, height))
+        # Draw white outline around player
+        pygame.draw.rect(screen, WHITE, (player_x - RUNNER_WIDTH//2, y_pos, RUNNER_WIDTH, height), 2)
+
+# =============================================
+# OBSTACLE CREATION FUNCTION
+# =============================================
+def create_obstacle():
+    """
+    Creates a new obstacle with random type and lane
+    Adds it to the obstacles list
+    """
+    lane = random.randint(0, 2)  # Random lane: 0=left, 1=center, 2=right
+    # Randomly choose obstacle type
+    obstacle_type = random.choice(['box', 'barrier', 'hole', 'train', 'low_barrier'])
+    
+    # Set properties based on obstacle type
+    if obstacle_type == 'box':
+        width, height = 60, 60
+        image = box_img
+    elif obstacle_type == 'barrier':
+        width, height = 80, 80
+        image = barrier_img
+    elif obstacle_type == 'hole':
+        width, height = 100, 40
+        image = hole_img
+    elif obstacle_type == 'train':
+        width, height = 140, 120
+        image = train_img
+    else:  # low_barrier
+        width, height = 70, 35
+        image = low_barrier_img
+    
+    # Create obstacle dictionary with all properties
+    obstacles.append({
+        'x': LANES[lane],      # X position based on lane
+        'y': -height,          # Start above screen (negative Y)
+        'width': width,        # Obstacle width
+        'height': height,      # Obstacle height  
+        'type': obstacle_type, # Type for collision logic
+        'image': image,        # Image for drawing
+        'lane': lane,          # Which lane it's in
+        'speed': obstacle_speed # Current movement speed
+    })
+
+# =============================================
+# OBSTACLE DRAWING FUNCTION
+# =============================================
+def draw_obstacles():
+    """
+    Draws all active obstacles on screen
+    Uses images if available, otherwise draws colored rectangles
+    """
+    for obstacle in obstacles:
+        if obstacle['image']:
+            # Draw obstacle image centered at its position
+            screen.blit(obstacle['image'], 
+                       (obstacle['x'] - obstacle['width']//2, obstacle['y']))
+        else:
+            # FALLBACK: Draw colored rectangle based on obstacle type
+            if obstacle['type'] == 'box':
+                pygame.draw.rect(screen, RED, (obstacle['x'] - obstacle['width']//2, obstacle['y'], obstacle['width'], obstacle['height']))
+            elif obstacle['type'] == 'barrier':
+                pygame.draw.rect(screen, (200, 100, 0), (obstacle['x'] - obstacle['width']//2, obstacle['y'], obstacle['width'], obstacle['height']))
+            elif obstacle['type'] == 'hole':
+                pygame.draw.rect(screen, BLACK, (obstacle['x'] - obstacle['width']//2, obstacle['y'], obstacle['width'], obstacle['height']))
+            elif obstacle['type'] == 'train':
+                pygame.draw.rect(screen, (60, 60, 60), (obstacle['x'] - obstacle['width']//2, obstacle['y'], obstacle['width'], obstacle['height']))
+            else:  # low_barrier
+                pygame.draw.rect(screen, (255, 165, 0), (obstacle['x'] - obstacle['width']//2, obstacle['y'], obstacle['width'], obstacle['height']))
+
+# =============================================
+# OBSTACLE UPDATE FUNCTION - MOVEMENT
+# =============================================
+def update_obstacles():
+    """
+    Moves all obstacles downward and removes off-screen ones
+    """
+    global obstacles
+    # Loop through all obstacles (use [:] to iterate over copy for safe removal)
+    for obstacle in obstacles[:]:
+        # Move obstacle downward based on its speed
+        obstacle['y'] += obstacle['speed']
+        # Check if obstacle has moved off bottom of screen
+        if obstacle['y'] > SCREEN_HEIGHT + 50:
+            obstacles.remove(obstacle)  # Remove from active obstacles list
+
+# =============================================
+# COLLISION DETECTION FUNCTION
+# =============================================
+def check_collisions():
+    """
+    Checks if player collides with any obstacle
+    Returns: True if collision detected, False otherwise
+    Special rules for holes (must jump) and low barriers (must crouch)
+    """
+    # Adjust player height and position based on crouching state
+    player_height_temp = RUNNER_HEIGHT if not player_crouching else RUNNER_HEIGHT//2
+    player_y_temp = player_y if not player_crouching else player_y + RUNNER_HEIGHT//2
+    
+    # Create rectangle for player collision detection
+    # pygame.Rect(x, y, width, height) returns: Rect object
+    player_rect = pygame.Rect(player_x - RUNNER_WIDTH//2, player_y_temp, RUNNER_WIDTH, player_height_temp)
+    
+    # Check collision with each obstacle
+    for obstacle in obstacles:
+        # Create rectangle for obstacle
+        obstacle_rect = pygame.Rect(obstacle['x'] - obstacle['width']//2, 
+                                  obstacle['y'], 
+                                  obstacle['width'], 
+                                  obstacle['height'])
+        
+        # rect.colliderect(other_rect) returns: True if rectangles overlap
+        if player_rect.colliderect(obstacle_rect):
+            # SPECIAL COLLISION RULES:
+            if obstacle['type'] == 'hole':
+                # Only die if not jumping over hole
+                if not player_jumping:  
+                    return True
+            elif obstacle['type'] == 'low_barrier':
+                # Only die if not crouching under low barrier
+                if not player_crouching:  
+                    return True
+            else:
+                # Die for all other obstacle types
+                return True  
+    return False  # No collisions detected
+
+# =============================================
+# TRACK DRAWING FUNCTION - BACKGROUND
+# =============================================
+def draw_tracks():
+    """
+    Draws the scrolling track background for all lanes
+    Creates illusion of forward movement
+    """
+    global track_offset
+    # Update scroll offset and wrap around using modulo
+    track_offset = (track_offset + track_speed) % 40
+    
+    # Draw tracks for each lane
+    for lane in LANES:
+        if use_track_image:
+            # Use track image with vertical tiling and scrolling
+            for y in range(-40, SCREEN_HEIGHT + 40, 40):
+                track_y = y + track_offset  # Apply scrolling offset
+                # image.get_rect(topleft=(x,y)) returns: Rect positioned at (x,y)
+                track_rect = track_img.get_rect(topleft=(lane - 80, track_y))
+                screen.blit(track_img, track_rect)
+        else:
+            # FALLBACK: Draw procedural tracks (colored rectangles)
+            pygame.draw.rect(screen, TRACK_COLOR, (lane - 80, 0, 160, SCREEN_HEIGHT))
+            
+            # Draw moving track lines
+            for y in range(-40, SCREEN_HEIGHT + 40, 40):
+                line_y = y + track_offset
+                pygame.draw.rect(screen, YELLOW, (lane - 60, line_y, 120, 10))
+        
+        # Draw lane borders (always visible)
+        pygame.draw.rect(screen, (150, 150, 150), (lane - 80, 0, 10, SCREEN_HEIGHT))
+        pygame.draw.rect(screen, (150, 150, 150), (lane + 70, 0, 10, SCREEN_HEIGHT))
+
+# =============================================
+# SCORE DISPLAY FUNCTION - UI
+# =============================================
+def draw_score():
+    """
+    Draws game information on screen: score, current gesture, speed
+    """
+    # font.render(text, antialias, color) returns: Surface with rendered text
+    score_text = font.render(f"Score: {score}", True, WHITE)
+    gesture_text = font.render(f"Gesture: {current_gesture}", True, YELLOW)
+    speed_text = font.render(f"Speed: {obstacle_speed:.1f}", True, GREEN)
+    
+    # Display text at specified positions
+    screen.blit(score_text, (20, 20))
+    screen.blit(gesture_text, (SCREEN_WIDTH - 200, 20))
+    screen.blit(speed_text, (20, 60))
+
+# =============================================
+# MENU SCREEN FUNCTION
+# =============================================
+def draw_menu():
+    """
+    Draws the start menu with game title and controls instructions
+    """
+    # Create semi-transparent overlay
+    # pygame.Surface((width, height), flags) returns: New Surface object
+    # pygame.SRCALPHA flag enables alpha channel for transparency
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 200))  # Black with 200/255 opacity
+    screen.blit(overlay, (0, 0))
+    
+    # Create menu text elements
+    title = big_font.render("SUBWAY RUNNER", True, YELLOW)
+    controls = font.render("Hand Controls:", True, WHITE)
+    control1 = font.render("Move Palm UP = Jump", True, GREEN)
+    control2 = font.render("Move Palm DOWN = Crouch", True, GREEN)
+    control3 = font.render("Move Palm LEFT = Move Left", True, GREEN)
+    control4 = font.render("Move Palm RIGHT = Move Right", True, GREEN)
+    start = font.render("Press SPACE to Start", True, YELLOW)
+    
+    # Center and display all text elements
+    screen.blit(title, (SCREEN_WIDTH//2 - title.get_width()//2, 100))
+    screen.blit(controls, (SCREEN_WIDTH//2 - controls.get_width()//2, 200))
+    screen.blit(control1, (SCREEN_WIDTH//2 - control1.get_width()//2, 250))
+    screen.blit(control2, (SCREEN_WIDTH//2 - control2.get_width()//2, 290))
+    screen.blit(control3, (SCREEN_WIDTH//2 - control3.get_width()//2, 330))
+    screen.blit(control4, (SCREEN_WIDTH//2 - control4.get_width()//2, 370))
+    screen.blit(start, (SCREEN_WIDTH//2 - start.get_width()//2, 450))
+
+# =============================================
+# GAME OVER SCREEN FUNCTION
+# =============================================
+def draw_game_over():
+    """
+    Draws the game over screen with final score and restart instructions
+    """
+    # Create semi-transparent overlay
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 200))
+    screen.blit(overlay, (0, 0))
+    
+    # Create game over text elements
+    game_over = big_font.render("GAME OVER", True, RED)
+    score_text = font.render(f"Final Score: {score}", True, WHITE)
+    speed_text = font.render(f"Final Speed: {obstacle_speed:.1f}", True, GREEN)
+    restart = font.render("Press R to Restart or Q to Quit", True, GREEN)
+    
+    # Center and display all text
+    screen.blit(game_over, (SCREEN_WIDTH//2 - game_over.get_width()//2, 150))
+    screen.blit(score_text, (SCREEN_WIDTH//2 - score_text.get_width()//2, 220))
+    screen.blit(speed_text, (SCREEN_WIDTH//2 - speed_text.get_width()//2, 260))
+    screen.blit(restart, (SCREEN_WIDTH//2 - restart.get_width()//2, 320))
+
+# =============================================
+# GAME RESET FUNCTION
+# =============================================
+def reset_game():
+    """
+    Resets all game variables to start a new game
+    """
+    global player_x, player_y, player_vel_y, player_jumping, player_crouching, player_lane
+    global obstacles, score, obstacle_speed, obstacle_timer, track_offset, track_speed
+    global last_speed_increase_score, elapsed_time
+    
+    # Reset player to starting position and state
+    player_x = LANES[1]
+    player_y = SCREEN_HEIGHT - RUNNER_HEIGHT - 20
+    player_vel_y = 0
+    player_jumping = False
+    player_crouching = False
+    player_lane = 1
+    
+    # Clear all obstacles and reset game progress
+    obstacles = []
+    score = 0
+    obstacle_speed = BASE_OBSTACLE_SPEED
+    track_speed = BASE_TRACK_SPEED
+    obstacle_timer = 0
+    track_offset = 0
+    last_speed_increase_score = 0
+    elapsed_time = 0  # Reset scoring timer
+
+# =============================================
+# GESTURE HANDLING FUNCTION
+# =============================================
+def handle_gesture(gesture):
+    """
+    Converts hand gestures to player actions
+    Arguments: gesture (string) - detected hand gesture
+    """
+    global current_gesture, player_jumping, player_crouching, player_lane, player_vel_y
+    
+    current_gesture = gesture  # Store current gesture for display
+    
+    # Only process gestures during gameplay
+    if game_state != "playing":
+        return
+    
+    # Map gestures to player actions
+    if gesture == "jump" and not player_jumping and not player_crouching:
+        # Start jump if not already jumping or crouching
+        player_vel_y = JUMP_STRENGTH
+        player_jumping = True
+        player_crouching = False
+        print("JUMP!")  # Debug output
+    elif gesture == "crouch" and not player_jumping:
+        # Crouch if not jumping
+        player_crouching = True
+    elif gesture == "left" and player_lane > 0:
+        # Move left if not already in leftmost lane
+        player_lane -= 1
+    elif gesture == "right" and player_lane < 2:
+        # Move right if not already in rightmost lane  
+        player_lane += 1
+    elif gesture == "none":
+        # Stop crouching when hand returns to center
+        player_crouching = False
+
+# =============================================
+# SCORING SYSTEM FUNCTION
+# =============================================
+def update_score():
+    """
+    Updates score continuously based on game speed
+    Called every frame to add points over time
+    """
+    global score, elapsed_time
+    elapsed_time += 1/FPS  # Add time since last frame (in seconds)
+    
+    # Add points every 0.1 seconds
+    if elapsed_time >= 0.1:
+        # Points = current speed × 2 (faster speed = more points)
+        points_to_add = int(obstacle_speed * 2)
+        score += points_to_add
+        elapsed_time = 0  # Reset timer
+
+# =============================================
+# DIFFICULTY INCREASE FUNCTION
+# =============================================
+def increase_speed():
+    """
+    Increases game speed progressively as score increases
+    Makes game harder over time
+    """
+    global obstacle_speed, track_speed, last_speed_increase_score
+    # Increase speed every 50 points, but only once per 50-point milestone
+    if score > 0 and score % 50 == 0 and score != last_speed_increase_score:
+        obstacle_speed += 1.0  # Make obstacles faster
+        track_speed += 1.0     # Make track scroll faster
+        last_speed_increase_score = score  # Remember we increased at this score
+        print(f"🚀 Speed increased to: {obstacle_speed}")  # Debug output
+
+# =============================================
+# MAIN GAME LOOP - HEART OF THE GAME
+# =============================================
+running = True  # Control variable for main loop
+print("Game started! Press SPACE to begin...")
+
+# MAIN GAME LOOP - runs 60 times per second
+while running:
+    # Control game speed - wait to maintain 60 FPS
+    # clock.tick(FPS) returns: milliseconds since last call
+    clock.tick(FPS)
+    
+    # =========================================
+    # INPUT HANDLING SECTION
+    # =========================================
+    
+    # Get hand gesture from camera
+    if hand_controller:
+        # hand_controller.get_gesture() returns: string with gesture name
+        gesture = hand_controller.get_gesture()
+        if gesture == "quit":  # Quit if 'q' pressed in camera window
+            running = False
+    else:
+        gesture = "none"  # Default if hand controller not available
+    
+    # Handle keyboard and window events
+    # pygame.event.get() returns: list of Event objects
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:  # Window close button clicked
+            running = False
+        
+        # Handle keyboard input
+        if event.type == pygame.KEYDOWN:  # Key pressed event
+            if event.key == pygame.K_SPACE and game_state == "menu":
+                # Start game from menu
+                game_state = "playing"
+                reset_game()
+                print("Game started! Use hand gestures to control.")
+            elif event.key == pygame.K_r and game_state == "game_over":
+                # Restart game after game over
+                game_state = "playing"
+                reset_game()
+            elif event.key == pygame.K_q:  # Quit game
+                running = False
+    
+    # =========================================
+    # GAME LOGIC SECTION
+    # =========================================
+    
+    # Process hand gestures
+    handle_gesture(gesture)
+    
+    # Only update game logic when playing (not in menu/game over)
+    if game_state == "playing":
+        # Update player position and physics
+        update_player()
+        
+        # Update score continuously
+        update_score()
+        
+        # Spawn new obstacles at intervals
+        obstacle_timer += 1
+        if obstacle_timer >= OBSTACLE_SPAWN_INTERVAL:
+            create_obstacle()
+            obstacle_timer = 0  # Reset spawn timer
+        
+        # Move all existing obstacles
+        update_obstacles()
+        
+        # Increase game speed as score increases
+        increase_speed()
+        
+        # Check for collisions with obstacles
+        if check_collisions():
+            game_state = "game_over"  # End game if collision detected
+            print("Game Over! Collision detected.")
+    
+    # =========================================
+    # RENDERING SECTION - DRAW EVERYTHING
+    # =========================================
+    
+    # Clear screen with background color
+    # surface.fill(color) returns: None
+    screen.fill(GRAY)
+    
+    # Draw game elements in correct order (background to foreground)
+    draw_tracks()      # Background tracks
+    draw_obstacles()   # Obstacles (on top of tracks)
+    draw_player()      # Player (on top of obstacles)
+    draw_score()       # UI text (on top of everything)
+    
+    # Draw appropriate screen based on game state
+    if game_state == "menu":
+        draw_menu()
+    elif game_state == "game_over":
+        draw_game_over()
+    
+    # Update display to show everything we've drawn
+    # pygame.display.flip() returns: None
+    # Makes all drawing operations visible on screen
+    pygame.display.flip()
+
+# =============================================
+# CLEANUP SECTION - PROPERLY CLOSE EVERYTHING
+# =============================================
+
+# Close hand controller and camera
+if hand_controller:
+    hand_controller.cleanup()
+
+# Close Pygame and free resources
+# pygame.quit() returns: None
+pygame.quit()
+
+
